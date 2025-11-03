@@ -59,10 +59,10 @@ The current scope of this project is focused on the Japanese language (日本語
 
 ## Architecture
 
-**Presentation Layer** — Manages UI overlays, panels, and interaction.
-**Application Logic Layer** — Handles state, scope management, subsystem coordination.
-**Infrastructure Layer** — Manages storage, configuration, keybind/tray integration.
-**Cross-cutting Concerns** — Settings management, logging, session persistence.
+**Presentation Layer**: Manages UI overlays, panels, and interaction.  
+**Application Logic Layer**: Handles state, scope management, subsystem coordination.  
+**Infrastructure Layer**: Manages storage, configuration, keybind/tray integration.  
+**Cross-cutting Concerns**: Settings management, logging, session persistence.  
 
 **Subsystems**
 
