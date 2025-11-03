@@ -1,2 +1,129 @@
-# UMOD
-A desktop overlay tool for capturing on-screen text via OCR and performing instant dictionary lookups within the same region.
+
+# **UMOD – Universal Mouse-Over Dictionary**
+
+**UMOD** is a cross-platform desktop utility that lets you capture a defined screen region, run OCR on the selection, and interact with the extracted text via hover-triggered dictionary lookups.
+
+UMOD was built for language learners who want the convenience of instant word lookups anywhere on their screen, not just in a browser. It is inspired by and extends [YOMITAN](), which provides great hover-based dictionary tools for web content. UMOD extends that same idea to the desktop by combining region capture, OCR, and dictionary lookup into a single overlay tool.
+
+
+---
+
+## Table of Contents
+
+* [Features](#features)
+* [Quick Start](#quick-start)
+* [Architecture](#architecture)
+* [Usage Examples](#usage-examples)
+* [Installation](#installation)
+* [Deployment](#deployment)
+* [Configuration & Settings](#configuration-settings)
+* [Contributing](#contributing)
+* [License](#license)
+* [Contact](#contact)
+
+---
+
+## Features
+
+* Capture screen region via keybind or tray.
+* Transparent overlay preserving underlying applications.
+* Drag & select area with visual bounds feedback.
+* OCR converts region to editable text.
+* Select/copy text via keyboard or mouse.
+* Hover with modifier key to look up words in-place.
+* Results panel anchored to selection/cursor; scrollable; supports audio if available.
+* Scoped lookup panels: nested scopes, unique per scope, cascading destruction.
+* Notes system: save OCR text or lookup results; attach memos and images; stored in JSON.
+* Home overlay: search tab, notes tab, settings tab.
+* Multiple dictionaries: enable/disable, set order/priority, concurrent requests with caching and timeouts.
+* Headless startup: runs in background with tray menu and global keybinds; overlays only when invoked.
+
+---
+
+## Quick Start
+
+1. Launch the application (via tray or keybind).
+2. Invoke region capture.
+3. Drag to select the area you want to capture.
+4. OCR runs and extracts text into the overlay.
+5. Hover over a word while holding the configured modifier key to see dictionary results.
+6. Save notes or copy text as needed.
+
+---
+
+## Architecture
+
+**Presentation Layer** — Manages UI overlays, panels, and interaction.
+**Application Logic Layer** — Handles state, scope management, subsystem coordination.
+**Infrastructure Layer** — Manages storage, configuration, keybind/tray integration.
+**Cross-cutting Concerns** — Settings management, logging, session persistence.
+
+**Subsystems**
+
+* **OCR Subsystem**: Takes image input, returns text.
+* **Dictionary Subsystem**: Normalises input, dispatches to enabled dictionaries, aggregates results.
+* **Notes Subsystem**: Manages note creation, editing, persistence, viewer overlay.
+* **Overlay Management**: Handles transparent overlay rendering, selection UX, panel management.
+
+---
+
+## Usage Examples
+
+```text
+# Example: Capture region
+Press <keybind> or select “Capture Region” from tray → drag to select → release to confirm → overlay opens with text.
+
+# Example: Lookup a word
+Hover over “origin” while holding Shift → lookup panel appears → click audio icon to hear pronunciation.
+
+# Example: Save a note
+Within the overlay, click “Save note” → add tags/memo → note stored and accessible via Home overlay → Notes tab.
+```
+
+---
+
+## Installation
+
+*(To be added)*
+
+---
+
+## Deployment
+
+*(To be added)*
+
+---
+
+## Configuration & Settings
+
+* Set global keybinds for capture, hide/show overlay, home overlay.
+* Configure dictionaries: enable/disable, prioritise, add local dictionaries.
+* Persist settings across sessions; conflict detection for keybinds.
+* Launch on system startup option.
+* Reset to defaults, apply/cancel semantics.
+
+---
+
+## Contributing
+
+If you’d like to contribute:
+
+1. Fork the repository and create a branch for your feature or fix.
+2. Ensure code style and tests pass.
+3. Submit a pull request with description of what you did.
+4. Follow issue templates and pull request guidelines [contributing.md](./contributing.md).
+
+See [Issues](https://github.com/IanTimchak/UMOD/issues) for current tasks and suggestions.
+
+---
+
+## License
+
+This project is licensed under the MIT License — see the [LICENSE](./LICENSE) file for details.
+
+---
+
+## Contact
+
+Maintainer: Ian Timchak
+GitHub: [IanChak](https://github.com/IanTimchak)
