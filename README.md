@@ -3,7 +3,13 @@
 
 **UMOD** is a cross-platform desktop utility that lets you capture a defined screen region, run OCR on the selection, and interact with the extracted text via hover-triggered dictionary lookups.
 
-UMOD was built for language learners who want the convenience of instant word lookups anywhere on their screen, not just in a browser. It is inspired by and extends [YOMITAN](), which provides great hover-based dictionary tools for web content. UMOD extends that same idea to the desktop by combining region capture, OCR, and dictionary lookup into a single overlay tool.
+Most modern MOD (Mouse-Over Dictionary) tools operate under browser applications. These tools work exceptionally well in this context and allow learners to seemlessly interact with their target language by simply highlighting the word. This works great in the browser, however similar tools for desktop applications are few-and-far between.
+
+This is the problem; when learners of languages encounter unfamiliar terms or characters in non-selectable contexts, such as images, games, or videos, they need to then look up those characters somehow in a dictionary. For some languages this is straightforward, but for others (especially those with complex orthography, such as mandarin or japanese) looking up an unfamiliar character is not a simple task. It requires using other tools (such as google translate or OCR) to interpret that text and determine its phonetic counterpart, to then search in a dictionary. This process creates unnecessary friction that disconnects the user from their target medium, interrupting immersion and making spontaneous learning harder. Each lookup becomes a small workflow—taking a picture, running OCR, copying text into a dictionary, and switching between windows—when it should instead be a single, seamless action. UMOD addresses this by combining these steps into one tool: capture, recognize, and look up, all within the same overlay. This approach lets learners stay engaged with the content they’re consuming while still having immediate access to accurate, context-aware dictionary results.
+
+UMOD was built for language learners who want the convenience of instant word lookups anywhere on their screen, not just in a browser. It is inspired by and extends [YOMITAN](), which provides great hover-based dictionary tools for web content.
+
+The current scope of this project is focused on the Japanese language (日本語). Contributions for extending the lexical analysis and conjugations of other languages are appreciated (when the project reaches that point).
 
 
 ---
