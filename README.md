@@ -70,7 +70,7 @@ The current scope of this project is focused on the Japanese language (日本語
 * **Dictionary Subsystem**: Normalises input, dispatches to enabled dictionaries, aggregates results.
 * **Notes Subsystem**: Manages note creation, editing, persistence, viewer overlay.
 * **Overlay Management**: Handles transparent overlay rendering, selection UX, panel management.
-
+![./UMOD-Architecture.svg]
 ---
 
 ## Usage Examples
