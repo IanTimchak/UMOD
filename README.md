@@ -16,16 +16,19 @@ The current scope of this project is focused on the Japanese language (日本語
 
 ## Table of Contents
 
-* [Features](#features)
-* [Quick Start](#quick-start)
-* [Architecture](#architecture)
-* [Usage Examples](#usage-examples)
-* [Installation](#installation)
-* [Deployment](#deployment)
-* [Configuration & Settings](#configuration-settings)
-* [Contributing](#contributing)
-* [License](#license)
-* [Contact](#contact)
+- [**UMOD – Universal Mouse-Over Dictionary**](#umod--universal-mouse-over-dictionary)
+  - [Table of Contents](#table-of-contents)
+  - [Features](#features)
+  - [Quick Start](#quick-start)
+  - [Architecture](#architecture)
+  - [](#)
+  - [Usage Examples](#usage-examples)
+  - [Installation](#installation)
+  - [Deployment](#deployment)
+  - [Configuration \& Settings](#configuration--settings)
+  - [Contributing](#contributing)
+  - [License](#license)
+  - [Contact](#contact)
 
 ---
 
@@ -70,7 +73,7 @@ The current scope of this project is focused on the Japanese language (日本語
 * **Dictionary Subsystem**: Normalises input, dispatches to enabled dictionaries, aggregates results.
 * **Notes Subsystem**: Manages note creation, editing, persistence, viewer overlay.
 * **Overlay Management**: Handles transparent overlay rendering, selection UX, panel management.
-![UMOD-Architecture.svg](./UMOD-Architecture.svg)
+![UMOD-Architecture.svg](./assets/UMOD-Architecture.svg)
 ---
 
 ## Usage Examples

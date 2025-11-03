@@ -1,0 +1,12 @@
+{
+    "$schema": "../gen/schemas/desktop-schema.json",
+    "identifier": "window_controls",
+    "description": "Allow frameless windows to startDragging",
+    "windows": [
+        "dictionary-window-*"
+    ],
+    "permissions": [
+        "core:window:allow-show",
+        "core:window:allow-set-focus"
+    ]
+}
