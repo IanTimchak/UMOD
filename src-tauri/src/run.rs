@@ -11,10 +11,11 @@ fn greet(name: &str) -> String {
 pub fn run() -> tauri::Result<()> {
     let app = tauri::Builder::default()
         .manage(AppState::new())
-        .invoke_handler(tauri::generate_handler![greet])
+        .invoke_handler(tauri::generate_handler![greet]) // Interaction between Tauri and Rust
         .plugin(tauri_plugin_opener::init()) //shared state
         .setup(|app| {
             //init services
+            // (for now just tray functionality)
             ui::tray::init_tray(app)?; // initialize tray from ui module
             Ok(())
         })
