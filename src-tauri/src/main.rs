@@ -9,6 +9,5 @@ mod app;
 //mod domain;
 
 fn main() {
-    //testwindowviews_lib::run().expect("error while running tauri application")
     run::run().expect("error while running tauri application")
 }
