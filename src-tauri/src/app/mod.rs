@@ -1,3 +1,5 @@
+pub mod region_selection;
+
 pub struct AppMediator {
     // later: pub note_service: NoteService,
     // pub ocr_service: OcrService,
