@@ -5,9 +5,12 @@ mod run;      // where your run() lives
 mod ui;       // top-level ui module
 mod state;    // your AppState
 mod app;
+mod infra;
+
 //mod infra;
 //mod domain;
 
 fn main() {
+    infra::init_ocr(true).expect("Failed to initialize Manga OCR");
     run::run().expect("error while running tauri application")
 }
