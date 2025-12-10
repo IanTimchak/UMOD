@@ -17,7 +17,7 @@ fn main() {
     infra::init_ocr(true).expect("Failed to initialize Manga OCR");
 
 
-    // REGION SELECTION SPAWN PROTOCOL:
+    // // REGION SELECTION SPAWN PROTOCOL:
     // let event_loop = EventLoop::new().unwrap();
 
     // if let Err(e) = event_loop.run_app(&mut RegionSelection::new()) {

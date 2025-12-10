@@ -21,7 +21,6 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 pyo3 = { version = "0.27", features = ["auto-initialize"] }
 anyhow = "1.0.100"
-image = "0.25.9"
 screenshots = "0.8.10"
 softbuffer = "0.4.6"
 winit = "0.30.12"
