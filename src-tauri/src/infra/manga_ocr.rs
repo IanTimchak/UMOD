@@ -41,8 +41,12 @@ pub fn initialize_manga_ocr(force_cpu: bool) -> PyResult<()> {
     })
 }
 
-/// Fast manga OCR using pre-initialized instance
-pub fn manga_ocr_fast(image_bytes: &[u8]) -> PyResult<String> {
+/// Fast manga OCR using pre-initialized instance.
+/// 
+/// Panics if not initialized.
+/// 
+/// ONLY USE THIS IF YOU ARE SURE initialize_manga_ocr() HAS BEEN CALLED
+fn manga_ocr_fast(image_bytes: &[u8]) -> PyResult<String> {
     Python::attach(|py| {
         let mocr = MANGA_OCR_INSTANCE.get()
             .ok_or_else(|| PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(
@@ -75,7 +79,7 @@ mod tests {
     fn test_manga_ocr() {
         initialize_manga_ocr(true).expect("Failed to initialize OCR");
 
-        let image_file = std::fs::read("src/ocr/00.jpg").expect("Failed to read test image");
+        let image_file = std::fs::read("tests/assets/00.jpg").expect("Failed to read test image");
         let text = manga_ocr(&image_file).expect("Manga OCR failed");
         println!("Extracted Text: {}", text);
         assert!(!text.is_empty(), "No text extracted");
@@ -86,7 +90,7 @@ mod tests {
     fn test_manga_ocr_2() {
         initialize_manga_ocr(true).expect("Failed to initialize OCR");
 
-        let image_file = std::fs::read("src/ocr/01.png").expect("Failed to read test image");
+        let image_file = std::fs::read("tests/assets/01.png").expect("Failed to read test image");
         let text = manga_ocr(&image_file).expect("Manga OCR failed");
         println!("Extracted Text: {}", text);
         assert!(!text.is_empty(), "No text extracted");
