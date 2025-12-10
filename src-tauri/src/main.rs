@@ -10,6 +10,6 @@ mod ocr;
 //mod domain;
 
 fn main() {
-    ocr::initialize_manga_ocr().expect("Failed to initialize Manga OCR");
+    ocr::initialize_manga_ocr(true).expect("Failed to initialize Manga OCR");
     run::run().expect("error while running tauri application")
 }
