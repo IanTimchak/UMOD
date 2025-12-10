@@ -11,6 +11,6 @@ mod infra;
 //mod domain;
 
 fn main() {
-    infra::initialize_manga_ocr(true).expect("Failed to initialize Manga OCR");
+    infra::init_ocr(true).expect("Failed to initialize Manga OCR");
     run::run().expect("error while running tauri application")
 }

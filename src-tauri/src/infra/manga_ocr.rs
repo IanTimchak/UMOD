@@ -10,7 +10,7 @@ static INIT_LOCK: Mutex<()> = Mutex::new(());
 /// Initialize Manga OCR once at startup
 /// Set force_cpu to true to avoid CUDA tensor issues
 /// Returns Ok(()) if already initialized (idempotent)
-pub fn initialize_manga_ocr(force_cpu: bool) -> PyResult<()> {
+pub fn init_ocr(force_cpu: bool) -> PyResult<()> {
     // Check if already initialized (fast path, no lock needed)
     if MANGA_OCR_INSTANCE.get().is_some() {
         return Ok(());
@@ -67,7 +67,7 @@ fn manga_ocr_fast(image_bytes: &[u8]) -> PyResult<String> {
 /// Uses CPU by default to avoid CUDA issues
 pub fn manga_ocr(image_bytes: &[u8]) -> PyResult<String> {
     // Initialize if needed (thread-safe due to the lock in initialize_manga_ocr)
-    initialize_manga_ocr(true)?;
+    init_ocr(true)?;
     manga_ocr_fast(image_bytes)
 }
 
@@ -77,7 +77,7 @@ mod tests {
 
     #[test]
     fn test_manga_ocr() {
-        initialize_manga_ocr(true).expect("Failed to initialize OCR");
+        init_ocr(true).expect("Failed to initialize OCR");
 
         let image_file = std::fs::read("tests/assets/00.jpg").expect("Failed to read test image");
         let text = manga_ocr(&image_file).expect("Manga OCR failed");
@@ -88,7 +88,7 @@ mod tests {
 
     #[test]
     fn test_manga_ocr_2() {
-        initialize_manga_ocr(true).expect("Failed to initialize OCR");
+        init_ocr(true).expect("Failed to initialize OCR");
 
         let image_file = std::fs::read("tests/assets/01.png").expect("Failed to read test image");
         let text = manga_ocr(&image_file).expect("Manga OCR failed");
