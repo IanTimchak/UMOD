@@ -1,0 +1,36 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  overflow: hidden;
+  cursor: crosshair;
+}
+
+/* four dim rectangles */
+.shade {
+  position: fixed;
+  background: rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+
+/* selection rect – only border, interior transparent */
+#selection-box {
+  position: fixed;
+  left: 0;
+  top: 0;
+  box-sizing: border-box;
+  display: none;
+  pointer-events: none;
+  background: transparent;
+}
+
+/* drag phase: simple white border */
+#selection-box.drawing {
+  border: 1px solid #ffffff;
+}
+
+/* confirmed / moving: bold marching ants */
+#selection-box.marching {
+  border: 2px solid #ffff00;
+  background: transparent;
+}

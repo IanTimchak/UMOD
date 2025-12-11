@@ -1,12 +1,6 @@
 // src/ui/windows.rs
 
-use tauri::{
-    AppHandle,
-    WebviewUrl,
-    WebviewWindowBuilder,
-    webview::Color,
-    Manager
-};
+use tauri::{webview::Color, AppHandle, Manager, WebviewUrl, WebviewWindowBuilder};
 
 use crate::state::AppState;
 
@@ -20,18 +14,14 @@ pub fn open_dictionary_window(app: &AppHandle) {
     let label = format!("{}{}", PREFIX, next_id);
 
     // build the window just like before
-    let _ = WebviewWindowBuilder::new(
-        app,
-        label,
-        WebviewUrl::App("index.html".into()),
-    )
-    .background_color(Color::from([0x2f, 0x2f, 0x2f]))
-    .inner_size(700.0, 600.0)
-    .position(100.0, 80.0)
-    .always_on_top(true)
-    .decorations(false)
-    .shadow(true)
-    .build();
+    let _ = WebviewWindowBuilder::new(app, label, WebviewUrl::App("index.html".into()))
+        .background_color(Color::from([0x2f, 0x2f, 0x2f]))
+        .inner_size(700.0, 600.0)
+        .position(100.0, 80.0)
+        .always_on_top(true)
+        .decorations(false)
+        .shadow(true)
+        .build();
 }
 
 /// Close/destroy all dictionary windows (those with our prefix).
@@ -44,5 +34,3 @@ pub fn close_all_dictionary_windows(app: &AppHandle) {
         }
     }
 }
-
-

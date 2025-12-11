@@ -1,16 +1,15 @@
-use winit::{
-    dpi::PhysicalSize,
-    event::{ElementState, MouseButton},
-};
+use winit::dpi::PhysicalSize;
+use winit::event::{ElementState, MouseButton};
 
-// CONSTANTS
+use crate::infra::screenshot::ScreenshotService;
+
 const MIN_BOX_SIZE: usize = 25;
 
-#[derive(Default)]
+#[derive(Debug, Default, Clone)]
 pub enum SelectionPhase {
     #[default]
     Idle,
-    Drawing, // (previously Dragging)
+    Drawing,
     Confirmed,
     Moving {
         offset: (f64, f64),
@@ -18,16 +17,13 @@ pub enum SelectionPhase {
     Capturing,
 }
 
+#[derive(Clone)]
 pub struct RegionSelectionState {
     pub start: Option<(f64, f64)>,
     pub end: Option<(f64, f64)>,
-    pub phase: SelectionPhase,
     pub cursor_pos: (f64, f64),
-
-    //window
     pub window_size: PhysicalSize<u32>,
-
-    //debounce
+    pub phase: SelectionPhase,
     pub capture_debounce: bool,
 }
 
@@ -45,23 +41,19 @@ impl Default for RegionSelectionState {
 }
 
 impl RegionSelectionState {
-    // ---------------------------------------------------------------
-    // Cursor update
-    // ---------------------------------------------------------------
     pub fn update_cursor(&mut self, mut x: f64, mut y: f64) {
-        // Clamp cursor to non-negative
         x = x.max(0.0);
         y = y.max(0.0);
 
         self.cursor_pos = (x, y);
 
-        match &self.phase {
+        match self.phase {
             SelectionPhase::Drawing => {
                 self.end = Some((x, y));
             }
 
             SelectionPhase::Moving { offset } => {
-                if let Some((_x, _y, w, h)) = self.selection_bounds() {
+                if let Some((_ox, _oy, w, h)) = self.selection_bounds() {
                     let mut new_x = x - offset.0;
                     let mut new_y = y - offset.1;
 
@@ -94,9 +86,6 @@ impl RegionSelectionState {
         }
     }
 
-    // ---------------------------------------------------------------
-    // Bounds lookup
-    // ---------------------------------------------------------------
     pub fn selection_bounds(&self) -> Option<(usize, usize, usize, usize)> {
         let (sx, sy) = self.start?;
         let (ex, ey) = self.end?;
@@ -109,27 +98,31 @@ impl RegionSelectionState {
         Some((x, y, w, h))
     }
 
-    // ---------------------------------------------------------------
-    // Mouse logic (the heart of the FSM)
-    // ---------------------------------------------------------------
+    /// True hit-test against the rectangle
+    pub fn hit_test(&self, x: f64, y: f64) -> bool {
+        if let Some((bx, by, bw, bh)) = self.selection_bounds() {
+            x >= bx as f64 && y >= by as f64 && x <= (bx + bw) as f64 && y <= (by + bh) as f64
+        } else {
+            false
+        }
+    }
+
     pub fn handle_mouse(&mut self, button: MouseButton, state: ElementState) {
         if button != MouseButton::Left {
-            return; // only left click used
+            return;
         }
 
         match (&self.phase, state) {
-            // -------------------------------------------------------
-            // Idle → Start drawing
-            // -------------------------------------------------------
+            // start drag
             (SelectionPhase::Idle, ElementState::Pressed) => {
                 self.start = Some(self.cursor_pos);
                 self.end = Some(self.cursor_pos);
                 self.phase = SelectionPhase::Drawing;
             }
 
-            // Drawing → Release: confirm or cancel
+            // finish drag (confirm or cancel)
             (SelectionPhase::Drawing, ElementState::Released) => {
-                if let Some((_x, _y, w, h)) = self.selection_bounds() {
+                if let Some((_, _, w, h)) = self.selection_bounds() {
                     if w < MIN_BOX_SIZE || h < MIN_BOX_SIZE {
                         self.reset();
                     } else {
@@ -140,23 +133,19 @@ impl RegionSelectionState {
                 }
             }
 
-            // -------------------------------------------------------
-            // Confirmed → Press: either start moving or ignore
-            // -------------------------------------------------------
+            // click inside confirmed box → start moving
             (SelectionPhase::Confirmed, ElementState::Pressed) => {
                 let (cx, cy) = self.cursor_pos;
 
                 if self.hit_test(cx, cy) {
-                    // Begin move
                     if let Some((x, y, _w, _h)) = self.selection_bounds() {
                         let offset = (cx - x as f64, cy - y as f64);
                         self.phase = SelectionPhase::Moving { offset };
                     }
                 }
-                // else: click outside does nothing
             }
 
-            // Moving → Release → back to Confirmed
+            // release after moving
             (SelectionPhase::Moving { .. }, ElementState::Released) => {
                 self.phase = SelectionPhase::Confirmed;
             }
@@ -165,23 +154,26 @@ impl RegionSelectionState {
         }
     }
 
-    // ---------------------------------------------------------------
-    // Hit-test
-    // ---------------------------------------------------------------
-    pub fn hit_test(&self, x: f64, y: f64) -> bool {
-        if let Some((bx, by, bw, bh)) = self.selection_bounds() {
-            x >= bx as f64 && y >= by as f64 && x <= (bx + bw) as f64 && y <= (by + bh) as f64
-        } else {
-            false
-        }
-    }
-
-    // ---------------------------------------------------------------
-    // Reset to Idle (public API)
-    // ---------------------------------------------------------------
     pub fn reset(&mut self) {
         self.start = None;
         self.end = None;
         self.phase = SelectionPhase::Idle;
+    }
+
+    pub fn capture(&self, screenshot: &ScreenshotService) -> Result<Option<String>, String> {
+        // Ensure we have a valid selection region
+        let (x, y, w, h) = match self.selection_bounds() {
+            Some(b) => b,
+            None => return Ok(None),
+        };
+
+        // Perform screenshot
+        match screenshot.capture_region(x as i32, y as i32, w as u32, h as u32) {
+            Ok(path) => {
+                println!("Captured screenshot {w}x{h} at: {}", path);
+                Ok(Some(path))
+            }
+            Err(err) => Err(format!("Screenshot failed: {err}")),
+        }
     }
 }

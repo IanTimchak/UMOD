@@ -15,49 +15,54 @@ pub fn init_ocr(force_cpu: bool) -> PyResult<()> {
     if MANGA_OCR_INSTANCE.get().is_some() {
         return Ok(());
     }
-    
+
     // Lock to prevent race condition
     let _guard = INIT_LOCK.lock().unwrap();
-    
+
     // Double-check after acquiring lock
     if MANGA_OCR_INSTANCE.get().is_some() {
         return Ok(());
     }
-    
+
     Python::attach(|py| {
         let manga_ocr_module = py.import("manga_ocr")?;
-        
+
         let mocr = if force_cpu {
             let kwargs = pyo3::types::PyDict::new(py);
             kwargs.set_item("force_cpu", true)?;
-            manga_ocr_module.getattr("MangaOcr")?.call((), Some(&kwargs))?
+            manga_ocr_module
+                .getattr("MangaOcr")?
+                .call((), Some(&kwargs))?
         } else {
             manga_ocr_module.getattr("MangaOcr")?.call0()?
         };
-        
+
         let _ = MANGA_OCR_INSTANCE.set(mocr.into());
-        
+
         Ok(())
     })
 }
 
 /// Fast manga OCR using pre-initialized instance.
-/// 
+///
 /// Panics if not initialized.
-/// 
+///
 /// ONLY USE THIS IF YOU ARE SURE initialize_manga_ocr() HAS BEEN CALLED
 fn manga_ocr_fast(image_bytes: &[u8]) -> PyResult<String> {
     Python::attach(|py| {
-        let mocr = MANGA_OCR_INSTANCE.get()
-            .ok_or_else(|| PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(
-                "OCR not initialized. Call initialize_manga_ocr() first"
-            ))?;
-        
+        let mocr = MANGA_OCR_INSTANCE.get().ok_or_else(|| {
+            PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(
+                "OCR not initialized. Call initialize_manga_ocr() first",
+            )
+        })?;
+
         let pil = py.import("PIL.Image")?;
         let io = py.import("io")?;
-        let bytes_io = io.getattr("BytesIO")?.call1((PyBytes::new(py, image_bytes),))?;
+        let bytes_io = io
+            .getattr("BytesIO")?
+            .call1((PyBytes::new(py, image_bytes),))?;
         let image = pil.getattr("open")?.call1((bytes_io,))?;
-        
+
         let result = mocr.call1(py, (image,))?;
         result.extract(py)
     })

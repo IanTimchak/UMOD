@@ -1,9 +1,9 @@
 // src/ui/tray.rs
 
 use tauri::{
-    App,
     menu::{Menu, MenuItem},
     tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
+    App,
 };
 
 use crate::ui::windows;
