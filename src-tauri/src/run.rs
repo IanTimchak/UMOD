@@ -27,6 +27,7 @@ pub fn run() -> tauri::Result<()> {
             rs_ready,
         ]) // Interaction between Tauri and Rust
         .plugin(tauri_plugin_opener::init()) //shared state
+        .plugin(tauri_plugin_clipboard_manager::init()) //clipboard
         .setup(|app| {
             //init services
             // (for now just tray functionality)
@@ -52,6 +53,7 @@ pub fn run() -> tauri::Result<()> {
                                 ShortcutState::Released => {
                                     // allow user to enter RS if they are not in it
                                     if !app.state::<AppState>().is_selecting_region() {
+                                        ui::reactive_overlay::OCROverlayController::close_overlay(&app);
                                         app.state::<AppState>().enter_selecting_region();
                                         println!("Region Selection activated...");
 

@@ -14,7 +14,7 @@ use winit::event_loop::EventLoop;
 //mod domain;
 
 fn main() {
-    //infra::init_ocr(true).expect("Failed to initialize Manga OCR");
+    infra::init_ocr(true).expect("Failed to initialize Manga OCR");
 
     // // REGION SELECTION SPAWN PROTOCOL:
     // let event_loop = EventLoop::new().unwrap();

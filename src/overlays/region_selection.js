@@ -6,6 +6,9 @@ const topS = document.getElementById("shade-top");
 const botS = document.getElementById("shade-bottom");
 const leftS = document.getElementById("shade-left");
 const rightS = document.getElementById("shade-right");
+const hintTop = document.getElementById("hint-top");
+const hintBottom = document.getElementById("hint-bottom");
+
 
 //show overlay
 invoke("rs_ready");
@@ -82,8 +85,8 @@ function setShadeRect(el, x, y, w, h) {
 
 function applyState(state) {
   if (!state) {
+    hintBottom.innerText = "";
     box.style.display = "none";
-    // full-screen dim
     setShadeRect(topS, 0, 0, window.innerWidth, window.innerHeight);
     botS.style.display = leftS.style.display = rightS.style.display = "none";
     return;
@@ -91,28 +94,30 @@ function applyState(state) {
 
   const { phase, bounds, screen } = state;
 
+  // update bottom hint
+  hintBottom.innerText = phase;
+
   const scrW = screen?.w ?? window.innerWidth;
   const scrH = screen?.h ?? window.innerHeight;
 
   if (!bounds) {
     box.style.display = "none";
-    // full-screen dim
+    hintBottom.innerText = phase;
     setShadeRect(topS, 0, 0, scrW, scrH);
     botS.style.display = leftS.style.display = rightS.style.display = "none";
     return;
   }
 
   const { x, y, w, h } = bounds;
-  console.log(bounds);
 
   if (phase === "Capturing") {
-    // no dim, no box – clean screenshot
+    // Hide everything
+    hintBottom.innerText = "Capturing…";
     box.style.display = "none";
     topS.style.display =
       botS.style.display =
       leftS.style.display =
-      rightS.style.display =
-        "none";
+      rightS.style.display = "none";
     return;
   }
 

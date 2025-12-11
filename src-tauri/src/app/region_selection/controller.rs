@@ -135,14 +135,14 @@ pub async fn rs_do_capture(app: AppHandle, rs: State<'_, RSController>) -> Resul
 
     // -------- send result back to main app --------
     // (Maybe AppMediator listens for this)
-    AppMediator::send_file_path(path.clone());
+    std::thread::spawn(move || {
+        // -------- allow keybind again --------
+        app.state::<AppState>().exit_selecting_region();
+        AppMediator::send_file_path(&app, path);
+    });
 
     // -------- reset fsm --------
     fsm.reset();
-
-    // -------- allow keybind again --------
-    app.state::<AppState>().exit_selecting_region();
-
     Ok(())
 }
 

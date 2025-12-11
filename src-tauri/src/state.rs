@@ -1,5 +1,5 @@
 // src-tauri/src/state.rs
-use std::sync::atomic::{AtomicUsize, Ordering, AtomicBool};
+use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
 
 pub struct AppState {
     next_id: AtomicUsize,

@@ -1,6 +1,6 @@
 {
     "$schema": "../gen/schemas/desktop-schema.json",
-    "identifier": "capture",
+    "identifier": "capture-overlay",
     "description": "Allow frameless windows to startDragging",
     "windows": [
         "region-overlay"

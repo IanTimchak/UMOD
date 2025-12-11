@@ -7,13 +7,7 @@ const SCREENSHOT_PATH: &str = "region_capture.png";
 pub struct ScreenshotService;
 
 impl ScreenshotService {
-    pub fn capture_region(
-        &self,
-        x: i32,
-        y: i32,
-        w: u32,
-        h: u32,
-    ) -> Result<String> {
+    pub fn capture_region(&self, x: i32, y: i32, w: u32, h: u32) -> Result<String> {
         // Choose primary display (or later: display that contains the region)
         let screens = Screen::all()?;
         let screen = &screens[0];

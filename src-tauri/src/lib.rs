@@ -32,6 +32,7 @@ fn close_all_dictionary_windows(app: &tauri::AppHandle) {
 pub fn run() -> tauri::Result<()> {
     //must return Result in order to delay the app build.
     let app = tauri::Builder::default()
+        .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![greet])

@@ -1,5 +1,8 @@
-use crate::app;
+use crate::infra::dictionary::DictionaryAdapter;
+use crate::infra::dictionary::{LookupError, LookupResult};
+use crate::infra::manga_ocr;
 use crate::state::AppState;
+use crate::ui::reactive_overlay::OCROverlayController;
 use tauri::{AppHandle, Manager, WebviewUrl, WebviewWindowBuilder};
 
 mod rc_service;
@@ -22,8 +25,25 @@ impl AppMediator {
         // later: maybe preload dictionary, etc.
     }
 
-    pub fn send_file_path(path: String) {
-        println!("{}", path);
+    pub fn send_file_path(app: &AppHandle, path: String) {
+        let image_file = std::fs::read(path).expect("Failed to read test image");
+        let text = manga_ocr(&image_file).expect("Manga OCR failed");
+        println!("Extracted Text: {}", text);
+
+        //let _result = Self::coordinate_lookup(text.as_str());
+        //println!("{:#?}", _result);
+
+        Self::open_ocr_overlay(app, text.as_str());
+    }
+
+    pub fn coordinate_lookup(text: &str) -> Result<LookupResult, LookupError> {
+        let adapter = DictionaryAdapter::new();
+        let result = adapter.lookup(text)?;
+
+        println!("First token: {:?}", result.token);
+        //println!("Term entries: {:?}", result.term_entries);
+        println!("Kanji entries: {:?}", result.kanji_entries);
+        Ok(result)
     }
 
     pub fn start_region_capture(app: &AppHandle) {
@@ -46,5 +66,30 @@ impl AppMediator {
         .expect("failed to build window");
 
         win.manage(region_selection::RSController::new());
+    }
+
+    /// Opens the OCR overlay window and injects the text
+    pub fn open_ocr_overlay(app: &AppHandle, text: &str) {
+        let js_safe_text = text.replace('`', "\\`");
+
+        let win = WebviewWindowBuilder::new(
+            app,
+            "reactive-overlay",
+            WebviewUrl::App("overlays/reactive_overlay.html".into()),
+        )
+        .transparent(true)
+        .decorations(false)
+        .background_color(tauri::webview::Color(0, 0, 0, 75))
+        .visible(true)
+        .resizable(false)
+        .fullscreen(false)
+        .always_on_top(true)
+        .inner_size(594.0, 153.0)
+        .position(0.0, 0.0)
+        .initialization_script(&format!(r#"window.__OCR_TEXT = `{}`;"#, js_safe_text))
+        .build()
+        .expect("Failed to create OCR overlay");
+
+        win.manage(OCROverlayController::new());
     }
 }

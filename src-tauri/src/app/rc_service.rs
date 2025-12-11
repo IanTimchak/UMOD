@@ -1,7 +1,6 @@
-
-use tauri::AppHandle;
-use std::thread;
 use std::sync::mpsc;
+use std::thread;
+use tauri::AppHandle;
 
 //use crate::app::region_selection::RegionSelection;
 
@@ -18,7 +17,7 @@ pub fn spawn_region_selection(app: &AppHandle) {
     //         println!("Overlay completed. Screenshot: {path}");
 
     //         // TODO: open the next overlay window (OCR preview, etc.)
-            
+
     //     }
     // });
 }
