@@ -2,15 +2,15 @@
 mod state;
 
 //importing
+use state::AppState;
 use tauri::{
     menu::{Menu, MenuItem},
     tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent}, //v2
+    webview::Color,
     Manager,
     WebviewUrl,
     WebviewWindowBuilder, //v2
-    webview::Color,
 };
-use state::AppState;
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[tauri::command]
@@ -29,8 +29,11 @@ fn close_all_dictionary_windows(app: &tauri::AppHandle) {
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
-pub fn run() -> tauri::Result<()> { //must return Result in order to delay the app build.
+pub fn run() -> tauri::Result<()> {
+    //must return Result in order to delay the app build.
     let app = tauri::Builder::default()
+        .plugin(tauri_plugin_clipboard_manager::init())
+        .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![greet])
         .setup(|app| {
@@ -53,8 +56,13 @@ pub fn run() -> tauri::Result<()> { //must return Result in order to delay the a
                     } = event
                     {
                         let app = tray.app_handle().clone();
-                        let label = format!("dictionary-window-{}", app.state::<AppState>().next_window_id());
-                        if true /*app.get_webview_window(label).is_none()*/ {
+                        let label = format!(
+                            "dictionary-window-{}",
+                            app.state::<AppState>().next_window_id()
+                        );
+                        if true
+                        /*app.get_webview_window(label).is_none()*/
+                        {
                             let _ = WebviewWindowBuilder::new(
                                 &app,
                                 label,

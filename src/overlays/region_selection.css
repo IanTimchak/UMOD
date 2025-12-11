@@ -1,0 +1,58 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  overflow: hidden;
+  cursor: crosshair;
+}
+
+/* four dim rectangles */
+.shade {
+  position: fixed;
+  background: rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+
+/* selection rect */
+#selection-box {
+  position: fixed;
+  left: 0;
+  top: 0;
+  box-sizing: border-box;
+  display: none;
+  pointer-events: none;
+  background: transparent;
+}
+
+/* drag phase: white border */
+#selection-box.drawing {
+  border: 1px solid #ffffff;
+}
+
+/* confirmed / moving: marching ants */
+#selection-box.marching {
+  border: 2px solid #ffff00;
+}
+
+/* --- HINT TEXT --- */
+
+#hint-top,
+#hint-bottom {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255, 200, 48, 0.767);
+  font-family: sans-serif;
+  font-size: 30px;
+  text-shadow: 0 0 4px black;
+  pointer-events: none; /* ensure it never blocks the selection */
+  z-index: 99999;
+}
+
+#hint-top {
+  top: 20px;
+}
+
+#hint-bottom {
+  bottom: 20px;
+}

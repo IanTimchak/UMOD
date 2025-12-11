@@ -1,0 +1,15 @@
+{
+    "$schema": "../gen/schemas/desktop-schema.json",
+    "identifier": "reactive-overlay",
+    "description": "Allow frameless windows to startDragging",
+    "windows": [
+        "reactive-overlay"
+    ],
+    "permissions": [
+        "clipboard-manager:allow-read-image",
+        "clipboard-manager:allow-write-text",
+        "core:window:allow-minimize",
+        "core:window:allow-maximize",
+        "core:window:allow-close"
+    ]
+}

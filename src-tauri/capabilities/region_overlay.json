@@ -1,0 +1,11 @@
+{
+    "$schema": "../gen/schemas/desktop-schema.json",
+    "identifier": "capture-overlay",
+    "description": "Allow frameless windows to startDragging",
+    "windows": [
+        "region-overlay"
+    ],
+    "permissions": [
+        "core:event:allow-listen"
+    ]
+}
