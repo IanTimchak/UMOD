@@ -5208,26 +5208,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "testwindowviews"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "pyo3",
- "reqwest",
- "screenshots",
- "serde",
- "serde_json",
- "softbuffer",
- "tauri",
- "tauri-build",
- "tauri-plugin-clipboard-manager",
- "tauri-plugin-global-shortcut",
- "tauri-plugin-opener",
- "tokio",
- "winit",
-]
-
-[[package]]
 name = "thiserror"
 version = "1.0.69"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5656,6 +5636,26 @@ dependencies = [
  "memoffset 0.9.1",
  "tempfile",
  "winapi",
+]
+
+[[package]]
+name = "umod"
+version = "1.0.0"
+dependencies = [
+ "anyhow",
+ "pyo3",
+ "reqwest",
+ "screenshots",
+ "serde",
+ "serde_json",
+ "softbuffer",
+ "tauri",
+ "tauri-build",
+ "tauri-plugin-clipboard-manager",
+ "tauri-plugin-global-shortcut",
+ "tauri-plugin-opener",
+ "tokio",
+ "winit",
 ]
 
 [[package]]

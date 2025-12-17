@@ -1,9 +1,9 @@
 [package]
-name = "testwindowviews"
-version = "0.1.0"
-description = "A Tauri App"
-authors = ["you"]
-edition = "2021"
+name = "umod"
+version = "1.0.0"
+description = "Universal Mouse-Over Dictionary"
+authors = ["Ian Timchak", "Bryan Caskey", "Martin Stanton"]
+edition = "2024"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
