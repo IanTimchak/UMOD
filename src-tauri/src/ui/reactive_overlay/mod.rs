@@ -17,8 +17,6 @@ impl OCROverlayController {
         }
     }
 
-    /// Close/destroy all dictionary windows (those with our prefix).
-    /// Your original code did this — just extracted here.
     pub fn close_overlay(app: &AppHandle) {
         for (label, win) in app.webview_windows() {
             if label.starts_with("reactive-overlay") {

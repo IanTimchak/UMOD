@@ -5,7 +5,6 @@ use crate::state::AppState;
 use crate::ui::reactive_overlay::OCROverlayController;
 use tauri::{AppHandle, Manager, WebviewUrl, WebviewWindowBuilder};
 
-mod rc_service;
 pub mod region_selection; //winit - softbuffer screencapture
 
 pub struct AppMediator {
