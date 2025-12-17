@@ -39,9 +39,6 @@ impl AppMediator {
         let adapter = DictionaryAdapter::new();
         let result = adapter.lookup(text)?;
 
-        println!("First token: {:?}", result.token);
-        //println!("Term entries: {:?}", result.term_entries);
-        println!("Kanji entries: {:?}", result.kanji_entries);
         Ok(result)
     }
 
@@ -90,5 +87,38 @@ impl AppMediator {
         .expect("Failed to create OCR overlay");
 
         win.manage(OCROverlayController::new());
+    }
+
+    pub fn open_dictionary_lookup_window(app: &AppHandle, lookup: &LookupResult) {
+        // Serialize LookupResult -> JSON
+        let json = serde_json::to_string(lookup).expect("Failed to serialize LookupResult");
+
+        // Safer than backticks: embed as JSON literal
+        let init = format!(r#"
+            window.__LOOKUP_RESULT = {json};
+        "#);
+
+        let _win = WebviewWindowBuilder::new(
+            app,
+            "dictionary-lookup",
+            WebviewUrl::App("dictionary/lookup.html".into()),
+        )
+        .transparent(false)
+        .decorations(true)
+        .always_on_top(true)
+        .resizable(false)
+        .fullscreen(false)
+        .inner_size(420.0, 520.0)
+        .title("UMOD Lookup")
+        .initialization_script(&init)
+        .build()
+        .expect("Failed to create dictionary lookup window");
+    }
+
+    /// One-shot: lookup and open UI window
+    pub fn lookup_and_open(app: &AppHandle, text: &str) -> Result<(), LookupError> {
+        let result = Self::coordinate_lookup(text)?;
+        Self::open_dictionary_lookup_window(app, &result);
+        Ok(())
     }
 }

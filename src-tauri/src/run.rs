@@ -4,6 +4,7 @@ use crate::app::AppMediator;
 use crate::app::region_selection::controller::*;
 use crate::state::AppState;
 use crate::ui;
+use ui::reactive_overlay::*;
 use tauri::Manager;
 
 #[tauri::command]
@@ -25,6 +26,7 @@ pub fn run() -> tauri::Result<()> {
             rs_set_window_size,
             rs_do_capture,
             rs_ready,
+            lookup_selected_text,
         ]) // Interaction between Tauri and Rust
         .plugin(tauri_plugin_opener::init()) //shared state
         .plugin(tauri_plugin_clipboard_manager::init()) //clipboard
