@@ -6,12 +6,7 @@ mod infra;
 mod run; // where your run() lives
 mod state; // your AppState
 mod ui; // top-level ui module
-
-//use app::region_selection::RegionSelection;
-use winit::event_loop::EventLoop;
-
-//mod infra;
-//mod domain;
+mod shared;
 
 fn main() {
     infra::init_ocr(true).expect("Failed to initialize Manga OCR");

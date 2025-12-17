@@ -1,6 +1,6 @@
 use std::sync::{Arc, Mutex};
 use tauri::{AppHandle, Manager, State};
-
+use crate::app::AppMediator;
 #[derive(Default)]
 pub struct OCROverlayState {
     pub text: String,
@@ -68,14 +68,15 @@ pub fn ocr_get_text(ctrl: State<'_, OCROverlayController>) -> String {
     d.text.clone()
 }
 
-//
-// ----------------------------------------------------------------
-//   Helper: Register controller in AppMediator
-// ----------------------------------------------------------------
-//
+#[tauri::command]
+pub fn lookup_selected_text(app: tauri::AppHandle, text: String) {
+    // fire-and-forget
+    std::thread::spawn(move || {
+        AppMediator::lookup_and_open(&app, &text).map_err(|e| format!("{e:?}"))
+    });
+}
 
-// Nothing else needed — AppMediator calls:
-//
-// win.manage(OCROverlayController::new());
-//
-// And JS calls the commands normally.
+
+
+
+
