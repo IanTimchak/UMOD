@@ -30,14 +30,17 @@ pub fn condense_term_entries(query: &str, raw: &YomitanTermEntriesResponse) -> U
                 .headwords
                 .iter()
                 .map(|h| {
-                    let mut classes = h.word_classes.clone();
+                    let mut classes: Vec<String> = if !h.word_classes.is_empty() {
+                        h.word_classes
+                            .iter()
+                            .filter_map(|c| normalize_pos(c).map(|s| s.to_string()))
+                            .collect()
+                    } else {
+                        pos_tags.clone()
+                    };
 
-                    // Inject canonical POS if none were supplied
-                    if classes.is_empty() {
-                        classes.extend(pos_tags.clone());
-                        classes.sort();
-                        classes.dedup();
-                    }
+                    classes.sort();
+                    classes.dedup();
 
                     UmodHeadword {
                         term: h.term.clone(),

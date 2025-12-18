@@ -84,7 +84,7 @@ pub fn extract_pos_from_entry(entry: &YomitanEntry) -> Vec<String> {
     out
 }
 
-fn normalize_pos(code: &str) -> Option<&'static str> {
+pub fn normalize_pos(code: &str) -> Option<&'static str> {
     match code {
         // nouns
         "n" | "pn" => Some("noun"),
