@@ -8,10 +8,7 @@
   },
   "app": {
     "withGlobalTauri": true,
-    "windows": [],
-    "security": {
-      "csp": null
-    }
+    "windows": []
   },
   "bundle": {
     "active": true,

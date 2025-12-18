@@ -4,18 +4,13 @@ use crate::app::AppMediator;
 use crate::app::region_selection::controller::*;
 use crate::state::AppState;
 use crate::ui;
+use ui::reactive_overlay::*;
 use tauri::Manager;
-
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
 
 pub fn run() -> tauri::Result<()> {
     let app = tauri::Builder::default()
         .manage(AppState::new())
         .invoke_handler(tauri::generate_handler![
-            greet,
             rs_cursor,
             rs_mousedown,
             rs_mouseup,
@@ -25,12 +20,12 @@ pub fn run() -> tauri::Result<()> {
             rs_set_window_size,
             rs_do_capture,
             rs_ready,
+            lookup_selected_text,
         ]) // Interaction between Tauri and Rust
         .plugin(tauri_plugin_opener::init()) //shared state
         .plugin(tauri_plugin_clipboard_manager::init()) //clipboard
         .setup(|app| {
             //init services
-            // (for now just tray functionality)
             ui::tray::init_tray(app)?; // initialize tray from ui module
 
             // Register global hotkey Ctrl+Shift+R to initialize

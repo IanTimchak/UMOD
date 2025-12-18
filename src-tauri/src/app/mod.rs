@@ -5,7 +5,6 @@ use crate::state::AppState;
 use crate::ui::reactive_overlay::OCROverlayController;
 use tauri::{AppHandle, Manager, WebviewUrl, WebviewWindowBuilder};
 
-mod rc_service;
 pub mod region_selection; //winit - softbuffer screencapture
 
 pub struct AppMediator {
@@ -40,9 +39,6 @@ impl AppMediator {
         let adapter = DictionaryAdapter::new();
         let result = adapter.lookup(text)?;
 
-        println!("First token: {:?}", result.token);
-        //println!("Term entries: {:?}", result.term_entries);
-        println!("Kanji entries: {:?}", result.kanji_entries);
         Ok(result)
     }
 
@@ -78,18 +74,112 @@ impl AppMediator {
             WebviewUrl::App("overlays/reactive_overlay.html".into()),
         )
         .transparent(true)
-        .decorations(false)
+        .decorations(true)
         .background_color(tauri::webview::Color(0, 0, 0, 75))
         .visible(true)
         .resizable(false)
+        .maximizable(false)
         .fullscreen(false)
         .always_on_top(true)
-        .inner_size(594.0, 153.0)
+        .inner_size(594.0, 121.0)
         .position(0.0, 0.0)
+        .title("Captured Text")
         .initialization_script(&format!(r#"window.__OCR_TEXT = `{}`;"#, js_safe_text))
         .build()
         .expect("Failed to create OCR overlay");
 
+        let app_handle = app.clone();
+
+        win.on_window_event(move |event| {
+            if matches!(event, tauri::WindowEvent::Destroyed) {
+                //close active lookup
+                if let Some(win) = app_handle.get_webview_window("dictionary-lookup") {
+                    let _ = win.close();
+                }
+            }
+        });
         win.manage(OCROverlayController::new());
+    }
+
+    pub fn open_dictionary_lookup_window(app: &AppHandle, lookup: &LookupResult) {
+        let json = serde_json::to_string(lookup).expect("Failed to serialize LookupResult");
+
+        let init = format!(
+            r#"
+        window.__LOOKUP_RESULT = {json};
+    "#
+        );
+
+        // This is the query that this window is showing.
+        let window_query = lookup.term_entries.query.clone();
+
+        // Pull last known position (if any)
+        let saved_pos = app
+            .state::<AppState>()
+            .last_lookup_window_pos
+            .lock()
+            .ok()
+            .and_then(|p| p.clone());
+
+        let mut builder = WebviewWindowBuilder::new(
+            app,
+            "dictionary-lookup",
+            WebviewUrl::App("dictionary/lookup.html".into()),
+        )
+        .transparent(true)
+        .decorations(true)
+        .always_on_top(true)
+        .resizable(false)
+        .maximizable(false)
+        .fullscreen(false)
+        .inner_size(420.0, 520.0)
+        .title("Results")
+        .initialization_script(&init);
+
+        if let Some(pos) = saved_pos {
+            builder = builder.position(pos.x, pos.y);
+        }
+
+        let win = builder
+            .build()
+            .expect("Failed to create dictionary lookup window");
+
+        let app_handle = app.clone();
+
+        let win_snapshot = win.clone();
+
+        win.on_window_event(move |event| {
+            match event {
+                tauri::WindowEvent::Moved(physical_pos) => {
+                    // Convert to logical so DPI changes don't break restore
+                    let logical =
+                        physical_pos.to_logical(win_snapshot.scale_factor().unwrap_or(1.0));
+
+                    if let Ok(mut pos) =
+                        app_handle.state::<AppState>().last_lookup_window_pos.lock()
+                    {
+                        *pos = Some(logical);
+                    }
+                }
+
+                tauri::WindowEvent::Destroyed => {
+                    if let Ok(mut current) = app_handle.state::<AppState>().current_lookup.lock() {
+                        // Only clear if this destroyed window is STILL the active query.
+                        if current.as_deref() == Some(window_query.as_str()) {
+                            *current = None;
+                        }
+                    }
+                }
+
+                _ => {}
+            }
+        });
+    }
+
+    /// One-shot: lookup and open UI window
+    pub fn lookup_and_open(app: &AppHandle, text: &str) -> Result<(), LookupError> {
+        let result = Self::coordinate_lookup(text)?;
+        Self::open_dictionary_lookup_window(app, &result);
+        Ok(())
     }
 }

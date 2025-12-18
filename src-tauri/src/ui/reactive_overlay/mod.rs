@@ -1,6 +1,7 @@
+use crate::app::AppMediator;
+use crate::state::AppState;
 use std::sync::{Arc, Mutex};
 use tauri::{AppHandle, Manager, State};
-
 #[derive(Default)]
 pub struct OCROverlayState {
     pub text: String,
@@ -17,8 +18,6 @@ impl OCROverlayController {
         }
     }
 
-    /// Close/destroy all dictionary windows (those with our prefix).
-    /// Your original code did this — just extracted here.
     pub fn close_overlay(app: &AppHandle) {
         for (label, win) in app.webview_windows() {
             if label.starts_with("reactive-overlay") {
@@ -70,14 +69,38 @@ pub fn ocr_get_text(ctrl: State<'_, OCROverlayController>) -> String {
     d.text.clone()
 }
 
-//
-// ----------------------------------------------------------------
-//   Helper: Register controller in AppMediator
-// ----------------------------------------------------------------
-//
+#[tauri::command]
+pub fn lookup_selected_text(app: tauri::AppHandle, text: String) {
+    let state = app.state::<AppState>();
 
-// Nothing else needed — AppMediator calls:
-//
-// win.manage(OCROverlayController::new());
-//
-// And JS calls the commands normally.
+    // Decide what to do (and update state) under lock,
+    // but do NOT close windows while holding the lock.
+    let should_close_existing = {
+        let mut current = state.current_lookup.lock().unwrap();
+
+        // Same lookup -> do nothing (or focus existing window)
+        if current.as_deref() == Some(text.as_str()) {
+            // Optional: just focus existing window
+            if let Some(win) = app.get_webview_window("dictionary-lookup") {
+                let _ = win.set_focus();
+                let _ = win.show();
+            }
+            return;
+        }
+
+        // New lookup -> set current now (prevents duplicate lookups immediately)
+        *current = Some(text.clone());
+        true
+    };
+
+    if should_close_existing {
+        if let Some(win) = app.get_webview_window("dictionary-lookup") {
+            let _ = win.close();
+        }
+    }
+
+    // fire-and-forget
+    std::thread::spawn(move || {
+        let _ = AppMediator::lookup_and_open(&app, &text);
+    });
+}

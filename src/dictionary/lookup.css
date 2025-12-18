@@ -1,0 +1,192 @@
+:root {
+  --bg: #1e1e1ee0;
+  --fg: #f2f2f2;
+  --muted: #aaaaaa;
+  --accent: #6fd3ff;
+  --border: #ff6df8;
+  --badge: #444;
+}
+html {
+  /* This creates a margin on the left equal to the scrollbar's width */
+  margin-right: calc(100vw - 100%);
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+body {
+  margin: 0;
+  background: transparent;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.lookup-window {
+  width: 100%;
+  background: var(--bg);
+  color: var(--fg);
+  padding: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+}
+
+/* Header */
+.lookup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 6px;
+}
+
+.term-block {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+}
+
+.term {
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+.reading {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+/* Badges */
+.badges {
+  display: flex;
+  gap: 6px;
+}
+
+.badge {
+  background: var(--badge);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+}
+
+.badge.priority {
+  color: gold;
+}
+
+/* Grammar */
+.grammar {
+  margin-top: 6px;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.tag {
+  background: #2a2a2a;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+}
+
+.tag.kana {
+  background: #553333;
+}
+
+/* Meanings */
+.meanings {
+  margin-top: 10px;
+}
+
+.sense-list {
+  padding-left: 1.2em;
+}
+
+.sense {
+  margin-bottom: 6px;
+}
+
+.gloss-list {
+  list-style: disc;
+  padding-left: 1em;
+}
+
+.gloss-list li {
+  font-size: 0.9rem;
+}
+
+/* Variants */
+.variants {
+  margin-top: 8px;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.variants-list {
+  display: inline-flex;
+  gap: 8px;
+  padding-left: 0;
+  list-style: none;
+}
+
+.entries {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.entry {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.headwords {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.headword-chip {
+  background: #2a2a2a;
+  border-radius: 6px;
+  padding: 4px 8px;
+  display: inline-flex;
+  gap: 8px;
+  align-items: baseline;
+}
+
+.hw-term { font-weight: 600; }
+.hw-reading { color: var(--muted); font-size: 0.85rem; }
+
+.definition {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.definition-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: baseline;
+}
+
+.dict-name {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+pre.plain {
+  margin: 0;
+  white-space: pre-wrap;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.85rem;
+  color: var(--fg);
+  background: #141414;
+  border-radius: 6px;
+  padding: 8px;
+  border: 1px solid var(--border);
+}
