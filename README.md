@@ -161,8 +161,13 @@ Tauri prerequisites must also be installed per the official documentation:
    * Yomitan API server running
    * Python 3.14.1 available
 
-2. Build and run UMOD via Cargo in the UMOD\src-tauri root folder:
-
+2. Build and run UMOD via Cargo in the UMOD\src-tauri root folder:  
+   First, install the required rust/tauri dependencies:  
+   ```bash
+   cargo install  
+   npm install  
+   ```
+   
    ```bash
    cargo run
    ```
