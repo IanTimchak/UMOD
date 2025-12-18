@@ -18,10 +18,6 @@ const lookupBtn = document.getElementById("lookup");
 copyBtn.style.display = "none";
 lookupBtn.style.display = "none";
 
-// ---------------------- WINDOW CONTROLS ----------------------
-document.getElementById("close").onclick = () => appWindow.close();
-document.getElementById("minimize").onclick = () => appWindow.minimize();
-
 // ---------------------- COPY ACTIONS ----------------------
 copyBtn.onclick = async () => {
     const selection = window.getSelection().toString();

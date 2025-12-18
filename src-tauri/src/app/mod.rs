@@ -74,45 +74,74 @@ impl AppMediator {
             WebviewUrl::App("overlays/reactive_overlay.html".into()),
         )
         .transparent(true)
-        .decorations(false)
+        .decorations(true)
         .background_color(tauri::webview::Color(0, 0, 0, 75))
         .visible(true)
         .resizable(false)
+        .maximizable(false)
         .fullscreen(false)
         .always_on_top(true)
-        .inner_size(594.0, 153.0)
+        .inner_size(594.0, 121.0)
         .position(0.0, 0.0)
+        .title("Captured Text")
         .initialization_script(&format!(r#"window.__OCR_TEXT = `{}`;"#, js_safe_text))
         .build()
         .expect("Failed to create OCR overlay");
 
+        let app_handle = app.clone();
+
+        win.on_window_event(move |event| {
+            if matches!(event, tauri::WindowEvent::Destroyed) {
+                //close active lookup
+                if let Some(win) = app_handle.get_webview_window("dictionary-lookup") {
+                    let _ = win.close();
+                }
+            }
+        });
         win.manage(OCROverlayController::new());
     }
 
     pub fn open_dictionary_lookup_window(app: &AppHandle, lookup: &LookupResult) {
-        // Serialize LookupResult -> JSON
         let json = serde_json::to_string(lookup).expect("Failed to serialize LookupResult");
 
-        // Safer than backticks: embed as JSON literal
-        let init = format!(r#"
-            window.__LOOKUP_RESULT = {json};
-        "#);
+        let init = format!(
+            r#"
+        window.__LOOKUP_RESULT = {json};
+    "#
+        );
 
-        let _win = WebviewWindowBuilder::new(
+        // This is the query that *this* window is showing.
+        let window_query = lookup.term_entries.query.clone();
+
+        let win = WebviewWindowBuilder::new(
             app,
             "dictionary-lookup",
             WebviewUrl::App("dictionary/lookup.html".into()),
         )
-        .transparent(false)
+        .transparent(true)
         .decorations(true)
         .always_on_top(true)
         .resizable(false)
+        .maximizable(false)
         .fullscreen(false)
         .inner_size(420.0, 520.0)
-        .title("UMOD Lookup")
+        .title("Results")
         .initialization_script(&init)
         .build()
         .expect("Failed to create dictionary lookup window");
+
+        let app_handle = app.clone();
+
+        win.on_window_event(move |event| {
+            if matches!(event, tauri::WindowEvent::Destroyed) {
+                if let Ok(mut current) = app_handle.state::<AppState>().current_lookup.lock() {
+                    // Only clear if this destroyed window is STILL the active query.
+                    if current.as_deref() == Some(window_query.as_str()) {
+                        *current = None;
+                    }
+                }
+            }
+        });
     }
 
     /// One-shot: lookup and open UI window

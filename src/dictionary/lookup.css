@@ -1,10 +1,16 @@
 :root {
-  --bg: #1e1e1e;
+  --bg: #1e1e1ee0;
   --fg: #f2f2f2;
   --muted: #aaaaaa;
   --accent: #6fd3ff;
-  --border: #333;
+  --border: #ff6df8;
   --badge: #444;
+}
+html {
+  /* This creates a margin on the left equal to the scrollbar's width */
+  margin-right: calc(100vw - 100%);
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
 
 body {
@@ -14,10 +20,9 @@ body {
 }
 
 .lookup-window {
-  width: 360px;
+  width: 100%;
   background: var(--bg);
   color: var(--fg);
-  border-radius: 8px;
   padding: 12px;
   box-shadow: 0 6px 20px rgba(0,0,0,0.4);
 }

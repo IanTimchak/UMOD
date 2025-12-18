@@ -1,7 +1,7 @@
 html, body {
     margin: 0;
     padding: 0;
-    background: transparent;;
+    background: #31313159;
     font-family: sans-serif;
     color: #fff;
     user-select: none;
@@ -42,7 +42,7 @@ html, body {
 
 #panel {
     position: absolute;
-    top: 35px;
+    top: 3px;
     left: 50%;
     width: 90%;
     transform: translateX(-50%);

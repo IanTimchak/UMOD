@@ -1,6 +1,7 @@
+use crate::app::AppMediator;
+use crate::state::AppState;
 use std::sync::{Arc, Mutex};
 use tauri::{AppHandle, Manager, State};
-use crate::app::AppMediator;
 #[derive(Default)]
 pub struct OCROverlayState {
     pub text: String,
@@ -70,13 +71,36 @@ pub fn ocr_get_text(ctrl: State<'_, OCROverlayController>) -> String {
 
 #[tauri::command]
 pub fn lookup_selected_text(app: tauri::AppHandle, text: String) {
+    let state = app.state::<AppState>();
+
+    // Decide what to do (and update state) under lock,
+    // but do NOT close windows while holding the lock.
+    let should_close_existing = {
+        let mut current = state.current_lookup.lock().unwrap();
+
+        // Same lookup -> do nothing (or focus existing window)
+        if current.as_deref() == Some(text.as_str()) {
+            // Optional: just focus existing window
+            if let Some(win) = app.get_webview_window("dictionary-lookup") {
+                let _ = win.set_focus();
+                let _ = win.show();
+            }
+            return;
+        }
+
+        // New lookup -> set current now (prevents duplicate lookups immediately)
+        *current = Some(text.clone());
+        true
+    };
+
+    if should_close_existing {
+        if let Some(win) = app.get_webview_window("dictionary-lookup") {
+            let _ = win.close();
+        }
+    }
+
     // fire-and-forget
     std::thread::spawn(move || {
-        AppMediator::lookup_and_open(&app, &text).map_err(|e| format!("{e:?}"))
+        let _ = AppMediator::lookup_and_open(&app, &text);
     });
 }
-
-
-
-
-
