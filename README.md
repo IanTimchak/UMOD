@@ -20,11 +20,15 @@ The current scope of this project is focused on the Japanese language (日本語
   - [Table of Contents](#table-of-contents)
   - [Features](#features)
   - [Quick Start](#quick-start)
-  - [Architecture](#architecture)
-  - [](#)
   - [Usage Examples](#usage-examples)
-  - [Installation](#installation)
-  - [Deployment](#deployment)
+  - [Prerequisites](#prerequisites)
+    - [Operating System](#operating-system)
+    - [Python](#python)
+    - [Yomitan Browser Extension](#yomitan-browser-extension)
+    - [Yomitan API](#yomitan-api)
+    - [UMOD Python Dependencies](#umod-python-dependencies)
+    - [Rust / Tauri Toolchain](#rust--tauri-toolchain)
+  - [Installing and Running UMOD](#installing-and-running-umod)
   - [Configuration \& Settings](#configuration--settings)
   - [Contributing](#contributing)
   - [License](#license)
@@ -34,47 +38,16 @@ The current scope of this project is focused on the Japanese language (日本語
 
 ## Features
 
-* Capture screen region via keybind or tray.
-* Transparent overlay preserving underlying applications.
-* Drag & select area with visual bounds feedback.
-* OCR converts region to editable text.
-* Select/copy text via keyboard or mouse.
-* Hover with modifier key to look up words in-place.
-* Results panel anchored to selection/cursor; scrollable; supports audio if available.
-* Scoped lookup panels: nested scopes, unique per scope, cascading destruction.
-* Notes system: save OCR text or lookup results; attach memos and images; stored in JSON.
-* Home overlay: search tab, notes tab, settings tab.
-* Multiple dictionaries: enable/disable, set order/priority, concurrent requests with caching and timeouts.
-* Headless startup: runs in background with tray menu and global keybinds; overlays only when invoked.
+TBD
 
 ---
 
 ## Quick Start
 
-1. Launch the application (via tray or keybind).
-2. Invoke region capture.
-3. Drag to select the area you want to capture.
-4. OCR runs and extracts text into the overlay.
-5. Hover over a word while holding the configured modifier key to see dictionary results.
-6. Save notes or copy text as needed.
+TBD
 
 ---
 
-## Architecture
-
-**Presentation Layer**: Manages UI overlays, panels, and interaction.  
-**Application Logic Layer**: Handles state, scope management, subsystem coordination.  
-**Infrastructure Layer**: Manages storage, configuration, keybind/tray integration.  
-**Cross-cutting Concerns**: Settings management, logging, session persistence.  
-
-**Subsystems**
-
-* **OCR Subsystem**: Takes image input, returns text.
-* **Dictionary Subsystem**: Normalises input, dispatches to enabled dictionaries, aggregates results.
-* **Notes Subsystem**: Manages note creation, editing, persistence, viewer overlay.
-* **Overlay Management**: Handles transparent overlay rendering, selection UX, panel management.
-![UMOD-Architecture.svg](./assets/UMOD-Architecture.svg)
----
 
 ## Usage Examples
 
@@ -85,21 +58,122 @@ Press <keybind> or select “Capture Region” from tray → drag to select → 
 # Example: Lookup a word
 Hover over “origin” while holding Shift → lookup panel appears → click audio icon to hear pronunciation.
 
-# Example: Save a note
-Within the overlay, click “Save note” → add tags/memo → note stored and accessible via Home overlay → Notes tab.
 ```
 
 ---
 
-## Installation
+## Prerequisites
 
-*(To be added)*
+UMOD currently runs **only on Windows** and requires the following components to be installed and correctly configured.
+
+### Operating System
+
+* **Windows 10 or Windows 11 (64-bit)**
 
 ---
 
-## Deployment
+### Python
 
-*(To be added)*
+* **Python 3.14.1 (64-bit)**
+
+  * Must be available on `PATH`
+  * Verify:
+
+    ```bash
+    python --version
+    ```
+
+> Other Python versions are not supported.
+
+---
+
+### Yomitan Browser Extension
+
+* Install the **Yomitan** browser extension
+* Install dictionaries **inside Yomitan** by following the official documentation:
+
+  * [https://yomitan.wiki/](https://yomitan.wiki/)
+* Dictionaries must be fully installed and enabled in Yomitan before running UMOD
+
+---
+
+### Yomitan API
+
+UMOD depends on a locally running Yomitan API service.
+
+1. Clone and set up the Yomitan API repository:
+
+   `https://github.com/yomidevs/yomitan-api`  
+   
+2. Follow **all setup instructions in that repository exactly**, including:
+
+   * Python environment setup
+   * Dependency installation
+   * Running the API server
+3. The API must be running and reachable before UMOD is launched.
+
+---
+
+### UMOD Python Dependencies
+
+UMOD includes a Python OCR backend that must be initialized before use.
+
+From the UMOD project directory containing `requirements.txt`:
+
+```bash
+pip install -r requirements.txt
+```
+
+Ensure this is executed using **Python 3.14.1**.
+
+---
+
+### Rust / Tauri Toolchain
+
+UMOD is a Tauri application and requires the full Rust toolchain.
+
+Install:
+
+* **rustup**
+* **rustc**
+* **cargo**
+
+Verify:
+
+```bash
+rustc --version
+cargo --version
+```
+
+Tauri prerequisites must also be installed per the official documentation:
+
+* [https://tauri.app/start/prerequisites/](https://tauri.app/start/prerequisites/)
+
+---
+
+## Installing and Running UMOD
+
+1. Install the repository and navigate to its folder, then execute `> cd .\src-tauri`.
+
+1. Ensure the following are all running and configured:
+
+   * Yomitan extension installed with dictionaries
+   * Yomitan API server running
+   * Python 3.14.1 available
+
+2. Build and run UMOD via Cargo in the UMOD\src-tauri root folder:
+
+   ```bash
+   cargo run
+   ```
+
+   or for release:
+
+   ```bash
+   cargo build --release
+   ```
+
+UMOD runs primarily via **tray interaction and global hotkeys**. No main window is shown by default.
 
 ---
 
@@ -128,11 +202,11 @@ See [Issues](https://github.com/IanTimchak/UMOD/issues) for current tasks and su
 
 ## License
 
-This project is licensed under the MIT License — see the [LICENSE](./LICENSE) file for details.
+This project is licensed under the GPL License — see the [LICENSE](./LICENSE) file for details.
 
 ---
 
 ## Contact
 
-Maintainer: Ian Timchak
+Maintainer: Ian Timchak  
 GitHub: [IanChak](https://github.com/IanTimchak)
