@@ -109,8 +109,11 @@ UMOD depends on a locally running Yomitan API service.
 
    * Python environment setup
    * Dependency installation
+   * PORT selection (19633)
    * Running the API server
 3. The API must be running and reachable before UMOD is launched.
+4. After following these instructions, the api will be reachable whenever the YOMITAN browser extension is running.
+5. Verify connection inside the YOMITAN settings.
 
 ---
 
@@ -179,6 +182,7 @@ Tauri prerequisites must also be installed per the official documentation:
    ```
 
 UMOD runs primarily via **tray interaction and global hotkeys**. No main window is shown by default.
+The hotkey for initiating region selection is `ctrl-shift-R`.
 
 ---
 
