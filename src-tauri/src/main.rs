@@ -8,6 +8,8 @@ mod state; // your AppState
 mod ui; // top-level ui module
 mod shared;
 
+
+
 fn main() {
     println!("Initializing OCR, please wait...");
     infra::init_ocr(true).expect("Failed to initialize Manga OCR");

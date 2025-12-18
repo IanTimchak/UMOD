@@ -4,7 +4,7 @@ use tauri::{
     App, Manager, menu::{Menu, MenuItem}, tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent}
 };
 
-use crate::{app::AppMediator, state::AppState, ui::{self, windows}};
+use crate::{app::AppMediator, state::AppState, ui::{self}};
 
 /// Initialize the tray icon + menu and wire up actions
 /// Call this from your Tauri `.setup(...)` in app.rs
@@ -20,17 +20,13 @@ pub fn init_tray(app: &App) -> tauri::Result<()> {
         .icon(app.default_window_icon().unwrap().clone())
         .tooltip("Generate a window")
         .show_menu_on_left_click(false)
-        .on_tray_icon_event(|tray, event| {
+        .on_tray_icon_event(|_tray, event| {
             if let TrayIconEvent::Click {
                 button: MouseButton::Left,
                 button_state: MouseButtonState::Up,
                 ..
             } = event
-            {
-                // let app_handle = tray.app_handle().clone();
-                // // delegate to the window module
-                // windows::open_dictionary_window(&app_handle);
-            }
+            {}
         })
         // menu items
         .on_menu_event(|app_handle, ev| match ev.id.as_ref() {
