@@ -110,10 +110,18 @@ impl AppMediator {
     "#
         );
 
-        // This is the query that *this* window is showing.
+        // This is the query that this window is showing.
         let window_query = lookup.term_entries.query.clone();
 
-        let win = WebviewWindowBuilder::new(
+        // Pull last known position (if any)
+        let saved_pos = app
+            .state::<AppState>()
+            .last_lookup_window_pos
+            .lock()
+            .ok()
+            .and_then(|p| p.clone());
+
+        let mut builder = WebviewWindowBuilder::new(
             app,
             "dictionary-lookup",
             WebviewUrl::App("dictionary/lookup.html".into()),
@@ -126,20 +134,44 @@ impl AppMediator {
         .fullscreen(false)
         .inner_size(420.0, 520.0)
         .title("Results")
-        .initialization_script(&init)
-        .build()
-        .expect("Failed to create dictionary lookup window");
+        .initialization_script(&init);
+
+        if let Some(pos) = saved_pos {
+            builder = builder.position(pos.x, pos.y);
+        }
+
+        let win = builder
+            .build()
+            .expect("Failed to create dictionary lookup window");
 
         let app_handle = app.clone();
 
+        let win_snapshot = win.clone();
+
         win.on_window_event(move |event| {
-            if matches!(event, tauri::WindowEvent::Destroyed) {
-                if let Ok(mut current) = app_handle.state::<AppState>().current_lookup.lock() {
-                    // Only clear if this destroyed window is STILL the active query.
-                    if current.as_deref() == Some(window_query.as_str()) {
-                        *current = None;
+            match event {
+                tauri::WindowEvent::Moved(physical_pos) => {
+                    // Convert to logical so DPI changes don't break restore
+                    let logical =
+                        physical_pos.to_logical(win_snapshot.scale_factor().unwrap_or(1.0));
+
+                    if let Ok(mut pos) =
+                        app_handle.state::<AppState>().last_lookup_window_pos.lock()
+                    {
+                        *pos = Some(logical);
                     }
                 }
+
+                tauri::WindowEvent::Destroyed => {
+                    if let Ok(mut current) = app_handle.state::<AppState>().current_lookup.lock() {
+                        // Only clear if this destroyed window is STILL the active query.
+                        if current.as_deref() == Some(window_query.as_str()) {
+                            *current = None;
+                        }
+                    }
+                }
+
+                _ => {}
             }
         });
     }

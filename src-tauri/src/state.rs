@@ -1,10 +1,12 @@
 // src-tauri/src/state.rs
 use std::sync::{Mutex, atomic::{AtomicBool, AtomicUsize, Ordering}};
+use tauri::LogicalPosition;
 
 pub struct AppState {
     next_id: AtomicUsize,
     is_selecting_region: AtomicBool,
     pub current_lookup: Mutex<Option<String>>,
+    pub last_lookup_window_pos: Mutex<Option<LogicalPosition<f64>>>,
 }
 impl AppState {
     pub fn new() -> Self {
@@ -12,6 +14,7 @@ impl AppState {
             next_id: AtomicUsize::new(0),
             is_selecting_region: AtomicBool::new(false),
             current_lookup: Mutex::new(None),
+            last_lookup_window_pos: Mutex::new(None),
         }
     }
     pub fn next_window_id(&self) -> usize {
